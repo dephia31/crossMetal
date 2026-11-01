@@ -1,0 +1,17 @@
+# ESP-IDF Partition Table — Metalio E-Ink4-Plus, 16 MB flash.
+#
+# Transcribed from the upstream hardware repository's partitions.csv (MIT).
+# Layout is kept identical to upstream so an existing device's NVS and OTA slots
+# keep their positions.
+#
+# Name,    Type, SubType,  Offset,   Size, Flags
+nvs,       data, nvs,      0x9000,   16K,
+otadata,   data, ota,      0xd000,   8K,
+phy_init,  data, phy,      0xf000,   4K,
+model,     data, spiffs,   0x10000,  400K,
+ota_0,     app,  ota_0,    0x80000,  5M,
+ota_1,     app,  ota_1,    0x580000, 5M,
+resources, data, spiffs,   0xa80000, 400K,
+# 24x24 1bpp ebook bitmap font, ~1.48 MiB.
+font_data, data, 0x40,     0xae4000, 5M,
+coredump,  data, coredump, 0xfe4000, 64K,

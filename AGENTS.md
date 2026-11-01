@@ -2,6 +2,26 @@
 
 CrossPoint Reader is open-source e-reader firmware for Xteink and other FreeInk-supported devices. Its mission is a lightweight, high-performance reading experience focused on EPUB rendering. The X3/X4's ESP32-C3 remains the resource baseline: roughly 380 KB usable RAM, no PSRAM, and a single framebuffer sized for the selected panel. Other board profiles have different CPUs, display sizes, input, and memory capabilities; check the selected profile before assuming them.
 
+## This fork targets the Metalio E-Ink 4 **Plus** only
+
+CrossMetal's hardware is the **Metalio E-Ink 4 Plus, 4.7 inch**: ESP32-**S31**
+(RISC-V), parallel EPDiy ED047TC2 panel at **1216x684**, TPS65185 PMIC,
+TCA9555 expander, FT6336U touch, PCF8563 RTC, SDMMC, 16 MB flash and 16 MB
+octal PSRAM. Treat those figures as the board's identity in every change.
+
+Do **not** reuse the profile of the non-Plus 3.97 inch sibling. `platformio.ini`
+ships `[env:metalio_eink4]` and the SDK ships `BoardConfig::MetalioEInk4`; both
+describe an **ESP32-S3, SSD1677 SPI, 800x480, CST816S** device that shares only
+a brand name. Assigning its geometry, controller, touch or pin map to this board
+produces firmware that compiles and then drives hardware that is not there.
+Before using any existing profile, resolve it to concrete SoC, panel controller,
+resolution, bus type and touch part, and confirm each against
+`components/metalio_bsp/include/metalio_pinout.h` and the boot log.
+
+The SDK's device list has no ESP32-S31 entry and its MCU-family check rejects one,
+so the SDK cannot be configured for this board without forking the submodule.
+Keep the BSP as the source of truth for board facts.
+
 ## FreeInk SDK
 
 The [FreeInk SDK](freeink-sdk/) supplies the board profiles, hardware drivers,
