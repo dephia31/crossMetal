@@ -15,6 +15,7 @@ idf_component_register(
         "src/cm_storage.c"
         "src/cm_rtc.c"
         "src/cm_touch_ft6336u.c"
+        "src/cm_sleep.c"
     INCLUDE_DIRS
         "include"
     REQUIRES
@@ -28,4 +29,5 @@ idf_component_register(
         fatfs
         sdmmc
         freertos
+        metalio_epd
 )

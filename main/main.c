@@ -19,6 +19,7 @@
 #include "cm_keys.h"
 #include "cm_power.h"
 #include "cm_rtc.h"
+#include "cm_sleep.h"
 #include "cm_storage.h"
 #include "cm_touch.h"
 #include "metalio_pinout.h"
@@ -35,8 +36,6 @@
 #include <esp_log.h>
 #include <esp_psram.h>
 #include <esp_system.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 
 static const char *TAG = "crossmetal";
 
@@ -170,7 +169,14 @@ void app_main(void) {
      * next run. The settle delay in `epd_board_init()` has no confirmed root
      * cause; ESP_RST_BROWNOUT here would point at supply sag rather than a hang.
      */
-    ESP_LOGI(TAG, "reset reason: %d", (int)esp_reset_reason());
+    const esp_reset_reason_t reset_reason = esp_reset_reason();
+    ESP_LOGI(TAG, "reset reason: %d", (int)reset_reason);
+
+    /* Restore subsystems if waking from deep sleep. */
+    if (reset_reason == ESP_RST_DEEPSLEEP) {
+        cm_sleep_restore_after_wake();
+    }
+
     log_chip_info();
 
     if (!check_framebuffer_budget()) {
@@ -259,4 +265,8 @@ void app_main(void) {
     }
 
     ESP_LOGI(TAG, "bring-up complete");
+    /*
+     * Deep sleep is available via `cm_sleep_enter(duration_s)` from `cm_sleep.h`,
+     * but is not triggered here: the reader UI owns the sleep decision.
+     */
 }
